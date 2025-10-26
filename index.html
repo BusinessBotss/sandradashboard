@@ -13,7 +13,7 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #fce7f3 0%, #ffffff 100%);
         }
         .card-shadow {
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -33,10 +33,10 @@
  </head>
  <body class="min-h-full bg-gray-50">
   <div class="min-h-full"><!-- Header -->
-   <header class="gradient-bg text-white py-6 px-4">
+   <header class="gradient-bg text-gray-800 py-6 px-4">
     <div class="max-w-6xl mx-auto">
      <h1 id="diary-title" class="text-3xl font-bold mb-2">Diario de Entrenamiento Semanal</h1>
-     <div class="flex flex-wrap gap-4 text-sm opacity-90"><span id="gym-name">Mi Gimnasio</span> <span>•</span> <span id="trainer-name">Entrenador Personal</span>
+     <div class="flex flex-wrap gap-4 text-sm opacity-75"><span id="gym-name">Mi Gimnasio</span> <span>•</span> <span id="trainer-name">Entrenador Personal</span>
      </div>
     </div>
    </header><!-- Week Setup -->
@@ -44,50 +44,50 @@
     <div class="bg-white rounded-lg card-shadow p-6 mb-6">
      <h2 class="text-xl font-semibold mb-4 text-gray-800">Configuración de la Semana</h2>
      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div><label for="week-number" class="block text-sm font-medium text-gray-700 mb-2">Número de Semana</label> <input type="text" id="week-number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: Semana 12">
+      <div><label for="week-number" class="block text-sm font-medium text-gray-700 mb-2">Número de Semana</label> <input type="text" id="week-number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ej: Semana 12">
       </div>
-      <div><label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Fecha de Inicio</label> <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div><label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Fecha de Inicio</label> <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500">
       </div>
      </div>
     </div><!-- Day Selector -->
     <div class="bg-white rounded-lg card-shadow p-6 mb-6">
      <h2 class="text-xl font-semibold mb-4 text-gray-800">Seleccionar Día de Entrenamiento</h2>
-     <div class="grid grid-cols-2 md:grid-cols-4 gap-3"><button onclick="selectDay(1)" class="day-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 1<br><span class="text-xs">Pierna + Conditioning</span> </button> <button onclick="selectDay(2)" class="day-btn bg-green-100 hover:bg-green-200 text-green-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 2<br><span class="text-xs">Tren Superior + Conditioning</span> </button> <button onclick="selectDay(3)" class="day-btn bg-purple-100 hover:bg-purple-200 text-purple-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 3<br><span class="text-xs">Espalda + Conditioning</span> </button> <button onclick="selectDay(4)" class="day-btn bg-orange-100 hover:bg-orange-200 text-orange-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 4<br><span class="text-xs">Accesorios + Conditioning</span> </button>
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-3"><button onclick="selectDay(1)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> 🦵 DÍA 1<br><span class="text-xs">Pierna + Conditioning</span> </button> <button onclick="selectDay(2)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> 💪 DÍA 2<br><span class="text-xs">Tren Superior + Conditioning</span> </button> <button onclick="selectDay(3)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> 🔥 DÍA 3<br><span class="text-xs">Espalda + Conditioning</span> </button> <button onclick="selectDay(4)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> ⚡ DÍA 4<br><span class="text-xs">Accesorios + Conditioning</span> </button>
      </div>
     </div><!-- Exercise Entry Form -->
     <div id="exercise-form" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
      <h2 class="text-xl font-semibold mb-4 text-gray-800">Registrar Ejercicio</h2>
-     <div id="day-info" class="mb-4 p-4 bg-blue-50 rounded-lg">
-      <h3 class="font-semibold text-blue-800" id="day-title"></h3>
-      <p class="text-sm text-blue-600" id="day-description"></p>
+     <div id="day-info" class="mb-4 p-4 bg-pink-50 rounded-lg border border-pink-200">
+      <h3 class="font-semibold text-pink-800" id="day-title"></h3>
+      <p class="text-sm text-pink-600" id="day-description"></p>
      </div>
      <form id="exercise-entry-form" class="space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-       <div><label for="exercise-name" class="block text-sm font-medium text-gray-700 mb-2">Ejercicio</label> <select id="exercise-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">Seleccionar ejercicio...</option> </select>
+       <div><label for="exercise-name" class="block text-sm font-medium text-gray-700 mb-2">Ejercicio</label> <select id="exercise-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"> <option value="">Seleccionar ejercicio...</option> </select>
        </div>
-       <div><label for="sets" class="block text-sm font-medium text-gray-700 mb-2">Series</label> <input type="number" id="sets" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" min="1" max="10">
-       </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-       <div><label for="reps" class="block text-sm font-medium text-gray-700 mb-2">Repeticiones</label> <input type="text" id="reps" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 8, 6-10, AMRAP">
-       </div>
-       <div><label for="target-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Objetivo (kg)</label> <input type="number" id="target-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.5">
-       </div>
-       <div><label for="actual-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Real (kg)</label> <input type="number" id="actual-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.5">
+       <div><label for="sets" class="block text-sm font-medium text-gray-700 mb-2">Series</label> <input type="number" id="sets" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" min="1" max="10">
        </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-       <div><label for="planned-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Planificado</label> <select id="planned-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
+       <div><label for="reps" class="block text-sm font-medium text-gray-700 mb-2">Repeticiones</label> <input type="text" id="reps" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ej: 8, 6-10, AMRAP">
        </div>
-       <div><label for="actual-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Real</label> <select id="actual-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
+       <div><label for="target-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Objetivo (kg)</label> <input type="number" id="target-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" step="0.5">
        </div>
-       <div><label for="rest-time" class="block text-sm font-medium text-gray-700 mb-2">Descanso</label> <input type="text" id="rest-time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 2'30''">
+       <div><label for="actual-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Real (kg)</label> <input type="number" id="actual-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" step="0.5">
        </div>
       </div>
-      <div><label for="technical-notes" class="block text-sm font-medium text-gray-700 mb-2">Observaciones Técnicas</label> <textarea id="technical-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ajustes técnicos, mejoras detectadas, fallos..."></textarea>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+       <div><label for="planned-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Planificado</label> <select id="planned-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
+       </div>
+       <div><label for="actual-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Real</label> <select id="actual-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
+       </div>
+       <div><label for="rest-time" class="block text-sm font-medium text-gray-700 mb-2">Descanso</label> <input type="text" id="rest-time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ej: 2'30''">
+       </div>
       </div>
-      <div><label for="video-link" class="block text-sm font-medium text-gray-700 mb-2">Enlace al Vídeo (opcional)</label> <input type="url" id="video-link" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://...">
-      </div><button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> Registrar Ejercicio </button>
+      <div><label for="technical-notes" class="block text-sm font-medium text-gray-700 mb-2">Observaciones Técnicas</label> <textarea id="technical-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ajustes técnicos, mejoras detectadas, fallos..."></textarea>
+      </div>
+      <div><label for="video-link" class="block text-sm font-medium text-gray-700 mb-2">Enlace al Vídeo (opcional)</label> <input type="url" id="video-link" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="https://...">
+      </div><button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> 💪 Registrar Ejercicio </button>
      </form>
     </div><!-- Session Summary Form -->
     <div id="session-summary" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
@@ -97,14 +97,14 @@
        <div class="flex gap-4"><label class="flex items-center"> <input type="radio" name="energy-level" value="Baja" class="mr-2"> <span>Baja</span> </label> <label class="flex items-center"> <input type="radio" name="energy-level" value="Media" class="mr-2"> <span>Media</span> </label> <label class="flex items-center"> <input type="radio" name="energy-level" value="Alta" class="mr-2"> <span>Alta</span> </label>
        </div>
       </div>
-      <div><label for="pain-discomfort" class="block text-sm font-medium text-gray-700 mb-2">Dolor o Molestias</label> <textarea id="pain-discomfort" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe cualquier dolor o molestia..."></textarea>
+      <div><label for="pain-discomfort" class="block text-sm font-medium text-gray-700 mb-2">Dolor o Molestias</label> <textarea id="pain-discomfort" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Describe cualquier dolor o molestia..."></textarea>
       </div>
       <div><label class="flex items-center"> <input type="checkbox" id="recordings-made" class="mr-2"> <span class="text-sm font-medium text-gray-700">Se realizaron grabaciones</span> </label>
       </div>
-      <div><label for="technique-observations" class="block text-sm font-medium text-gray-700 mb-2">Técnica / Observaciones</label> <textarea id="technique-observations" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ajustes técnicos generales, mejoras, fallos detectados..."></textarea>
+      <div><label for="technique-observations" class="block text-sm font-medium text-gray-700 mb-2">Técnica / Observaciones</label> <textarea id="technique-observations" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ajustes técnicos generales, mejoras, fallos detectados..."></textarea>
       </div>
-      <div><label for="extra-notes" class="block text-sm font-medium text-gray-700 mb-2">Notas Extra</label> <textarea id="extra-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Factores externos: sueño, nutrición, estrés, etc."></textarea>
-      </div><button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> Guardar Resumen de Sesión </button>
+      <div><label for="extra-notes" class="block text-sm font-medium text-gray-700 mb-2">Notas Extra</label> <textarea id="extra-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Factores externos: sueño, nutrición, estrés, etc."></textarea>
+      </div><button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> ✨ Guardar Resumen de Sesión </button>
      </form>
     </div><!-- Training Log -->
     <div class="bg-white rounded-lg card-shadow p-6">
@@ -128,7 +128,7 @@
         let currentRecordCount = 0;
 
         const defaultConfig = {
-            diary_title: "Diario de Entrenamiento Semanal",
+            diary_title: "💪 Diario de Entrenamiento - Sandra Gutiérrez",
             gym_name: "Mi Gimnasio",
             trainer_name: "Entrenador Personal"
         };
@@ -241,9 +241,9 @@
             
             // Update day buttons
             document.querySelectorAll('.day-btn').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-blue-500');
+                btn.classList.remove('ring-2', 'ring-pink-500');
             });
-            event.target.classList.add('ring-2', 'ring-blue-500');
+            event.target.classList.add('ring-2', 'ring-pink-500');
 
             // Show exercise form
             document.getElementById('exercise-form').style.display = 'block';
@@ -482,5 +482,5 @@
         // Initialize the app
         initializeApp();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'994b88ec2157cbbc',t:'MTc2MTQ5ODI4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'994ca6fcb750cfa1',t:'MTc2MTUxMDAwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
