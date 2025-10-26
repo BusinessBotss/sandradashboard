@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diario de Entrenamiento Semanal</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .exercise-card {
+            transition: all 0.3s ease;
+        }
+        .exercise-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        .rpe-scale {
+            background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%);
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="min-h-full bg-gray-50">
+  <div class="min-h-full"><!-- Header -->
+   <header class="gradient-bg text-white py-6 px-4">
+    <div class="max-w-6xl mx-auto">
+     <h1 id="diary-title" class="text-3xl font-bold mb-2">Diario de Entrenamiento Semanal</h1>
+     <div class="flex flex-wrap gap-4 text-sm opacity-90"><span id="gym-name">Mi Gimnasio</span> <span>•</span> <span id="trainer-name">Entrenador Personal</span>
+     </div>
+    </div>
+   </header><!-- Week Setup -->
+   <div class="max-w-6xl mx-auto p-4">
+    <div class="bg-white rounded-lg card-shadow p-6 mb-6">
+     <h2 class="text-xl font-semibold mb-4 text-gray-800">Configuración de la Semana</h2>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div><label for="week-number" class="block text-sm font-medium text-gray-700 mb-2">Número de Semana</label> <input type="text" id="week-number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: Semana 12">
+      </div>
+      <div><label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Fecha de Inicio</label> <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+     </div>
+    </div><!-- Day Selector -->
+    <div class="bg-white rounded-lg card-shadow p-6 mb-6">
+     <h2 class="text-xl font-semibold mb-4 text-gray-800">Seleccionar Día de Entrenamiento</h2>
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-3"><button onclick="selectDay(1)" class="day-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 1<br><span class="text-xs">Pierna + Conditioning</span> </button> <button onclick="selectDay(2)" class="day-btn bg-green-100 hover:bg-green-200 text-green-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 2<br><span class="text-xs">Tren Superior + Conditioning</span> </button> <button onclick="selectDay(3)" class="day-btn bg-purple-100 hover:bg-purple-200 text-purple-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 3<br><span class="text-xs">Espalda + Conditioning</span> </button> <button onclick="selectDay(4)" class="day-btn bg-orange-100 hover:bg-orange-200 text-orange-800 py-3 px-4 rounded-lg font-medium transition-colors"> DÍA 4<br><span class="text-xs">Accesorios + Conditioning</span> </button>
+     </div>
+    </div><!-- Exercise Entry Form -->
+    <div id="exercise-form" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
+     <h2 class="text-xl font-semibold mb-4 text-gray-800">Registrar Ejercicio</h2>
+     <div id="day-info" class="mb-4 p-4 bg-blue-50 rounded-lg">
+      <h3 class="font-semibold text-blue-800" id="day-title"></h3>
+      <p class="text-sm text-blue-600" id="day-description"></p>
+     </div>
+     <form id="exercise-entry-form" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+       <div><label for="exercise-name" class="block text-sm font-medium text-gray-700 mb-2">Ejercicio</label> <select id="exercise-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">Seleccionar ejercicio...</option> </select>
+       </div>
+       <div><label for="sets" class="block text-sm font-medium text-gray-700 mb-2">Series</label> <input type="number" id="sets" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" min="1" max="10">
+       </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+       <div><label for="reps" class="block text-sm font-medium text-gray-700 mb-2">Repeticiones</label> <input type="text" id="reps" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 8, 6-10, AMRAP">
+       </div>
+       <div><label for="target-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Objetivo (kg)</label> <input type="number" id="target-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.5">
+       </div>
+       <div><label for="actual-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Real (kg)</label> <input type="number" id="actual-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.5">
+       </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+       <div><label for="planned-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Planificado</label> <select id="planned-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
+       </div>
+       <div><label for="actual-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Real</label> <select id="actual-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
+       </div>
+       <div><label for="rest-time" class="block text-sm font-medium text-gray-700 mb-2">Descanso</label> <input type="text" id="rest-time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 2'30''">
+       </div>
+      </div>
+      <div><label for="technical-notes" class="block text-sm font-medium text-gray-700 mb-2">Observaciones Técnicas</label> <textarea id="technical-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ajustes técnicos, mejoras detectadas, fallos..."></textarea>
+      </div>
+      <div><label for="video-link" class="block text-sm font-medium text-gray-700 mb-2">Enlace al Vídeo (opcional)</label> <input type="url" id="video-link" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://...">
+      </div><button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> Registrar Ejercicio </button>
+     </form>
+    </div><!-- Session Summary Form -->
+    <div id="session-summary" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
+     <h2 class="text-xl font-semibold mb-4 text-gray-800">Resumen de la Sesión</h2>
+     <form id="summary-form" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-2">Energía General</label>
+       <div class="flex gap-4"><label class="flex items-center"> <input type="radio" name="energy-level" value="Baja" class="mr-2"> <span>Baja</span> </label> <label class="flex items-center"> <input type="radio" name="energy-level" value="Media" class="mr-2"> <span>Media</span> </label> <label class="flex items-center"> <input type="radio" name="energy-level" value="Alta" class="mr-2"> <span>Alta</span> </label>
+       </div>
+      </div>
+      <div><label for="pain-discomfort" class="block text-sm font-medium text-gray-700 mb-2">Dolor o Molestias</label> <textarea id="pain-discomfort" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe cualquier dolor o molestia..."></textarea>
+      </div>
+      <div><label class="flex items-center"> <input type="checkbox" id="recordings-made" class="mr-2"> <span class="text-sm font-medium text-gray-700">Se realizaron grabaciones</span> </label>
+      </div>
+      <div><label for="technique-observations" class="block text-sm font-medium text-gray-700 mb-2">Técnica / Observaciones</label> <textarea id="technique-observations" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ajustes técnicos generales, mejoras, fallos detectados..."></textarea>
+      </div>
+      <div><label for="extra-notes" class="block text-sm font-medium text-gray-700 mb-2">Notas Extra</label> <textarea id="extra-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Factores externos: sueño, nutrición, estrés, etc."></textarea>
+      </div><button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> Guardar Resumen de Sesión </button>
+     </form>
+    </div><!-- Training Log -->
+    <div class="bg-white rounded-lg card-shadow p-6">
+     <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-gray-800">Registro de Entrenamientos</h2>
+      <div class="text-sm text-gray-600">
+       Total de ejercicios: <span id="exercise-count">0</span>
+      </div>
+     </div>
+     <div id="training-log" class="space-y-4">
+      <div class="text-center text-gray-500 py-8">
+       Selecciona un día y comienza a registrar tus ejercicios
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+        let currentDay = null;
+        let exerciseData = [];
+        let currentRecordCount = 0;
+
+        const defaultConfig = {
+            diary_title: "Diario de Entrenamiento Semanal",
+            gym_name: "Mi Gimnasio",
+            trainer_name: "Entrenador Personal"
+        };
+
+        const dayExercises = {
+            1: [
+                "Sentadilla trasera",
+                "Extensión de cuádriceps", 
+                "Peso muerto rumano (RDL)",
+                "Hip Thrust",
+                "Zancadas",
+                "Box Jump",
+                "Wall Sit",
+                "A Jump",
+                "Goblet Squat"
+            ],
+            2: [
+                "Press de banca con barra",
+                "Remo unilateral",
+                "Press con mancuernas",
+                "Curl de bíceps alterno",
+                "Elevaciones laterales",
+                "Frontal isométrico",
+                "Pullover con mancuerna",
+                "Burpees",
+                "Flexiones",
+                "Dumbbell Alternating Snatches"
+            ],
+            3: [
+                "Peso muerto RM",
+                "Deadlift 75% RM",
+                "Face Pulls",
+                "Pendlay Row",
+                "Remo 150m",
+                "Thrusters",
+                "Plancha izquierda",
+                "Plancha derecha",
+                "Plancha frontal"
+            ],
+            4: [
+                "Subidas al cajón con mancuerna",
+                "Bulgarian Split Squat",
+                "Anti-Rotación",
+                "Peso muerto unilateral",
+                "Sentadilla búlgara",
+                "Extensión de cadera unilateral"
+            ]
+        };
+
+        const dayInfo = {
+            1: {
+                title: "DÍA 1 – Pierna + Conditioning",
+                description: "Trabajo de pierna con énfasis en patrones de empuje y bisagra + trabajo metabólico EMOM"
+            },
+            2: {
+                title: "DÍA 2 – Tren Superior + Conditioning", 
+                description: "Entrenamiento de empujes y tirones del tren superior + condicionamiento de 15 minutos"
+            },
+            3: {
+                title: "DÍA 3 – Espalda + Conditioning",
+                description: "Sesión de fuerza máxima en peso muerto + trabajo complementario y resistencia estructural"
+            },
+            4: {
+                title: "DÍA 4 – Accesorios Tren Inferior + Conditioning",
+                description: "Trabajo unilateral, equilibrio y control motor + condicionamiento"
+            }
+        };
+
+        const dataHandler = {
+            onDataChanged(data) {
+                exerciseData = data;
+                currentRecordCount = data.length;
+                updateTrainingLog();
+                updateExerciseCount();
+            }
+        };
+
+        async function initializeApp() {
+            const initResult = await window.dataSdk.init(dataHandler);
+            if (!initResult.isOk) {
+                console.error("Failed to initialize data SDK");
+                return;
+            }
+
+            if (window.elementSdk) {
+                await window.elementSdk.init({
+                    defaultConfig,
+                    onConfigChange: async (config) => {
+                        document.getElementById('diary-title').textContent = config.diary_title || defaultConfig.diary_title;
+                        document.getElementById('gym-name').textContent = config.gym_name || defaultConfig.gym_name;
+                        document.getElementById('trainer-name').textContent = config.trainer_name || defaultConfig.trainer_name;
+                    },
+                    mapToCapabilities: (config) => ({
+                        recolorables: [],
+                        borderables: [],
+                        fontEditable: undefined,
+                        fontSizeable: undefined
+                    }),
+                    mapToEditPanelValues: (config) => new Map([
+                        ["diary_title", config.diary_title || defaultConfig.diary_title],
+                        ["gym_name", config.gym_name || defaultConfig.gym_name],
+                        ["trainer_name", config.trainer_name || defaultConfig.trainer_name]
+                    ])
+                });
+            }
+        }
+
+        function selectDay(day) {
+            currentDay = day;
+            
+            // Update day buttons
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-blue-500');
+            });
+            event.target.classList.add('ring-2', 'ring-blue-500');
+
+            // Show exercise form
+            document.getElementById('exercise-form').style.display = 'block';
+            document.getElementById('session-summary').style.display = 'block';
+
+            // Update day info
+            document.getElementById('day-title').textContent = dayInfo[day].title;
+            document.getElementById('day-description').textContent = dayInfo[day].description;
+
+            // Populate exercise dropdown
+            const exerciseSelect = document.getElementById('exercise-name');
+            exerciseSelect.innerHTML = '<option value="">Seleccionar ejercicio...</option>';
+            dayExercises[day].forEach(exercise => {
+                const option = document.createElement('option');
+                option.value = exercise;
+                option.textContent = exercise;
+                exerciseSelect.appendChild(option);
+            });
+        }
+
+        document.getElementById('exercise-entry-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (currentRecordCount >= 999) {
+                showToast("Límite máximo de 999 ejercicios alcanzado. Por favor, elimina algunos registros primero.", "error");
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const weekNumber = document.getElementById('week-number').value;
+            const startDate = document.getElementById('start-date').value;
+
+            if (!weekNumber || !startDate) {
+                showToast("Por favor, completa el número de semana y la fecha de inicio.", "error");
+                return;
+            }
+
+            const exerciseRecord = {
+                id: Date.now().toString(),
+                week_number: weekNumber,
+                start_date: startDate,
+                day: currentDay,
+                exercise_name: document.getElementById('exercise-name').value,
+                sets: parseInt(document.getElementById('sets').value),
+                reps: document.getElementById('reps').value,
+                target_weight: parseFloat(document.getElementById('target-weight').value) || 0,
+                actual_weight: parseFloat(document.getElementById('actual-weight').value) || 0,
+                planned_rpe: parseFloat(document.getElementById('planned-rpe').value) || 0,
+                actual_rpe: parseFloat(document.getElementById('actual-rpe').value) || 0,
+                rest_time: document.getElementById('rest-time').value,
+                technical_notes: document.getElementById('technical-notes').value,
+                video_link: document.getElementById('video-link').value,
+                energy_level: "",
+                pain_discomfort: "",
+                recordings_made: false,
+                technique_observations: "",
+                extra_notes: "",
+                created_at: new Date().toISOString()
+            };
+
+            const button = e.target.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.textContent = 'Guardando...';
+
+            const result = await window.dataSdk.create(exerciseRecord);
+
+            if (result.isOk) {
+                showToast("Ejercicio registrado correctamente", "success");
+                e.target.reset();
+            } else {
+                showToast("Error al guardar el ejercicio. Inténtalo de nuevo.", "error");
+            }
+
+            button.disabled = false;
+            button.textContent = 'Registrar Ejercicio';
+        });
+
+        document.getElementById('summary-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const energyLevel = document.querySelector('input[name="energy-level"]:checked')?.value || "";
+            const painDiscomfort = document.getElementById('pain-discomfort').value;
+            const recordingsMade = document.getElementById('recordings-made').checked;
+            const techniqueObservations = document.getElementById('technique-observations').value;
+            const extraNotes = document.getElementById('extra-notes').value;
+
+            // Update the last exercise record with session summary
+            if (exerciseData.length > 0) {
+                const lastExercise = exerciseData[exerciseData.length - 1];
+                const updatedRecord = {
+                    ...lastExercise,
+                    energy_level: energyLevel,
+                    pain_discomfort: painDiscomfort,
+                    recordings_made: recordingsMade,
+                    technique_observations: techniqueObservations,
+                    extra_notes: extraNotes
+                };
+
+                const button = e.target.querySelector('button[type="submit"]');
+                button.disabled = true;
+                button.textContent = 'Guardando...';
+
+                const result = await window.dataSdk.update(updatedRecord);
+
+                if (result.isOk) {
+                    showToast("Resumen de sesión guardado correctamente", "success");
+                    e.target.reset();
+                } else {
+                    showToast("Error al guardar el resumen. Inténtalo de nuevo.", "error");
+                }
+
+                button.disabled = false;
+                button.textContent = 'Guardar Resumen de Sesión';
+            }
+        });
+
+        function updateTrainingLog() {
+            const logContainer = document.getElementById('training-log');
+            
+            if (exerciseData.length === 0) {
+                logContainer.innerHTML = '<div class="text-center text-gray-500 py-8">Selecciona un día y comienza a registrar tus ejercicios</div>';
+                return;
+            }
+
+            // Group by week and day
+            const groupedData = exerciseData.reduce((acc, exercise) => {
+                const key = `${exercise.week_number}-${exercise.day}`;
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(exercise);
+                return acc;
+            }, {});
+
+            logContainer.innerHTML = '';
+
+            Object.keys(groupedData).sort().reverse().forEach(key => {
+                const exercises = groupedData[key];
+                const firstExercise = exercises[0];
+                
+                const dayCard = document.createElement('div');
+                dayCard.className = 'exercise-card bg-gray-50 rounded-lg p-4 border border-gray-200';
+                
+                dayCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-semibold text-gray-800">${dayInfo[firstExercise.day]?.title || `Día ${firstExercise.day}`}</h3>
+                            <p class="text-sm text-gray-600">${firstExercise.week_number} - ${new Date(firstExercise.start_date).toLocaleDateString('es-ES')}</p>
+                        </div>
+                        <button onclick="deleteDay('${key}')" class="text-red-500 hover:text-red-700 text-sm">
+                            Eliminar día
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        ${exercises.map(exercise => `
+                            <div class="bg-white p-3 rounded border border-gray-100">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium text-gray-800">${exercise.exercise_name}</h4>
+                                        <div class="text-sm text-gray-600 mt-1">
+                                            <span>${exercise.sets} series × ${exercise.reps} reps</span>
+                                            ${exercise.actual_weight > 0 ? ` • ${exercise.actual_weight}kg` : ''}
+                                            ${exercise.actual_rpe > 0 ? ` • RPE ${exercise.actual_rpe}` : ''}
+                                        </div>
+                                        ${exercise.technical_notes ? `<p class="text-xs text-gray-500 mt-1">${exercise.technical_notes}</p>` : ''}
+                                    </div>
+                                    <button onclick="deleteExercise('${exercise.__backendId}')" class="text-red-400 hover:text-red-600 text-xs ml-2">
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${firstExercise.energy_level ? `
+                        <div class="mt-3 pt-3 border-t border-gray-200">
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">Resumen de Sesión</h4>
+                            <div class="text-xs text-gray-600 space-y-1">
+                                <div>Energía: ${firstExercise.energy_level}</div>
+                                ${firstExercise.pain_discomfort ? `<div>Molestias: ${firstExercise.pain_discomfort}</div>` : ''}
+                                ${firstExercise.recordings_made ? '<div>✓ Grabaciones realizadas</div>' : ''}
+                                ${firstExercise.technique_observations ? `<div>Técnica: ${firstExercise.technique_observations}</div>` : ''}
+                                ${firstExercise.extra_notes ? `<div>Notas: ${firstExercise.extra_notes}</div>` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+                
+                logContainer.appendChild(dayCard);
+            });
+        }
+
+        async function deleteExercise(backendId) {
+            const exercise = exerciseData.find(ex => ex.__backendId === backendId);
+            if (!exercise) return;
+
+            const result = await window.dataSdk.delete(exercise);
+            if (result.isOk) {
+                showToast("Ejercicio eliminado", "success");
+            } else {
+                showToast("Error al eliminar el ejercicio", "error");
+            }
+        }
+
+        async function deleteDay(dayKey) {
+            const [weekNumber, day] = dayKey.split('-');
+            const dayExercises = exerciseData.filter(ex => 
+                ex.week_number === weekNumber && ex.day === parseInt(day)
+            );
+
+            for (const exercise of dayExercises) {
+                await window.dataSdk.delete(exercise);
+            }
+            
+            showToast("Día de entrenamiento eliminado", "success");
+        }
+
+        function updateExerciseCount() {
+            document.getElementById('exercise-count').textContent = exerciseData.length;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            }`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize the app
+        initializeApp();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'994b88ec2157cbbc',t:'MTc2MTQ5ODI4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
