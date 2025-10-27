@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="es">
- <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diario de Entrenamiento Semanal</title>
@@ -8,479 +8,588 @@
   <script src="/_sdk/data_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-        body {
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #fce7f3 0%, #ffffff 100%);
-        }
-        .card-shadow {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        .exercise-card {
-            transition: all 0.3s ease;
-        }
-        .exercise-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-        .rpe-scale {
-            background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%);
-        }
-    </style>
+    body { box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .exercise-card { transition: all 0.3s ease; }
+    .exercise-card:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+    .rpe-scale { background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%); }
+  </style>
   <style>@view-transition { navigation: auto; }</style>
- </head>
- <body class="min-h-full bg-gray-50">
-  <div class="min-h-full"><!-- Header -->
-   <header class="gradient-bg text-gray-800 py-6 px-4">
-    <div class="max-w-6xl mx-auto">
-     <h1 id="diary-title" class="text-3xl font-bold mb-2">Diario de Entrenamiento Semanal</h1>
-     <div class="flex flex-wrap gap-4 text-sm opacity-75"><span id="gym-name">Mi Gimnasio</span> <span>•</span> <span id="trainer-name">Entrenador Personal</span>
-     </div>
+</head>
+<body class="min-h-full bg-gray-50">
+  <div class="min-h-full">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 px-4">
+      <div class="max-w-6xl mx-auto">
+        <h1 id="diary-title" class="text-3xl font-bold mb-2">Diario de Entrenamiento Semanal</h1>
+        <div class="flex flex-wrap gap-4 text-sm opacity-90">
+          <span id="gym-name">Mi Gimnasio</span><span>•</span><span id="trainer-name">Entrenador Personal</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Week Setup -->
+    <div class="max-w-6xl mx-auto p-4">
+      <div class="bg-white rounded-lg card-shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Configuración de la Semana</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label for="week-number" class="block text-sm font-medium text-gray-700 mb-2">Número de Semana</label>
+            <input type="text" id="week-number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 12">
+          </div>
+          <div>
+            <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Fecha de Inicio</label>
+            <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Day Selector -->
+      <div class="bg-white rounded-lg card-shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Seleccionar Día de Entrenamiento</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button onclick="selectDay(1, event, this)" class="day-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-3 px-4 rounded-lg font-medium transition-colors" aria-pressed="false">
+            DÍA 1<br><span class="text-xs">Pierna + Conditioning</span>
+          </button>
+          <button onclick="selectDay(2, event, this)" class="day-btn bg-green-100 hover:bg-green-200 text-green-800 py-3 px-4 rounded-lg font-medium transition-colors" aria-pressed="false">
+            DÍA 2<br><span class="text-xs">Tren Superior + Conditioning</span>
+          </button>
+          <button onclick="selectDay(3, event, this)" class="day-btn bg-purple-100 hover:bg-purple-200 text-purple-800 py-3 px-4 rounded-lg font-medium transition-colors" aria-pressed="false">
+            DÍA 3<br><span class="text-xs">Espalda + Conditioning</span>
+          </button>
+          <button onclick="selectDay(4, event, this)" class="day-btn bg-orange-100 hover:bg-orange-200 text-orange-800 py-3 px-4 rounded-lg font-medium transition-colors" aria-pressed="false">
+            DÍA 4<br><span class="text-xs">Accesorios + Conditioning</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Exercise Entry Form -->
+      <div id="exercise-form" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Registrar Ejercicio</h2>
+        <div id="day-info" class="mb-4 p-4 bg-blue-50 rounded-lg">
+          <h3 class="font-semibold text-blue-800" id="day-title"></h3>
+          <p class="text-sm text-blue-600" id="day-description"></p>
+        </div>
+
+        <form id="exercise-entry-form" class="space-y-4" novalidate>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="exercise-name" class="block text-sm font-medium text-gray-700 mb-2">Ejercicio</label>
+              <select id="exercise-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Seleccionar ejercicio...</option>
+              </select>
+            </div>
+            <div>
+              <label for="sets" class="block text-sm font-medium text-gray-700 mb-2">Series</label>
+              <input type="number" id="sets" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" min="1" max="10" inputmode="numeric">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label for="reps" class="block text-sm font-medium text-gray-700 mb-2">Repeticiones</label>
+              <input type="text" id="reps" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 8, 6-10, AMRAP">
+            </div>
+            <div>
+              <label for="target-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Objetivo (kg)</label>
+              <input type="number" id="target-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.5" inputmode="decimal">
+            </div>
+            <div>
+              <label for="actual-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Real (kg)</label>
+              <input type="number" id="actual-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.5" inputmode="decimal">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label for="planned-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Planificado</label>
+              <select id="planned-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Seleccionar...</option>
+                <option value="6">6 - Fácil</option>
+                <option value="7">7 - Moderado</option>
+                <option value="7.5">7.5 - Moderado-Alto</option>
+                <option value="8">8 - Difícil</option>
+                <option value="8.5">8.5 - Muy Difícil</option>
+                <option value="9">9 - Máximo</option>
+                <option value="10">10 - Fallo</option>
+              </select>
+            </div>
+            <div>
+              <label for="actual-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Real</label>
+              <select id="actual-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Seleccionar...</option>
+                <option value="6">6 - Fácil</option>
+                <option value="7">7 - Moderado</option>
+                <option value="7.5">7.5 - Moderado-Alto</option>
+                <option value="8">8 - Difícil</option>
+                <option value="8.5">8.5 - Muy Difícil</option>
+                <option value="9">9 - Máximo</option>
+                <option value="10">10 - Fallo</option>
+              </select>
+            </div>
+            <div>
+              <label for="rest-time" class="block text-sm font-medium text-gray-700 mb-2">Descanso</label>
+              <input type="text" id="rest-time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 2'30''">
+            </div>
+          </div>
+
+          <div>
+            <label for="technical-notes" class="block text-sm font-medium text-gray-700 mb-2">Observaciones Técnicas</label>
+            <textarea id="technical-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ajustes técnicos, mejoras detectadas, fallos..."></textarea>
+          </div>
+
+          <div>
+            <label for="video-link" class="block text-sm font-medium text-gray-700 mb-2">Enlace al Vídeo (opcional)</label>
+            <input type="url" id="video-link" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://...">
+          </div>
+
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+            Registrar Ejercicio
+          </button>
+        </form>
+      </div>
+
+      <!-- Session Summary Form -->
+      <div id="session-summary" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Resumen de la Sesión</h2>
+        <form id="summary-form" class="space-y-4" novalidate>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Energía General</label>
+            <div class="flex gap-4">
+              <label class="flex items-center"><input type="radio" name="energy-level" value="Baja" class="mr-2"><span>Baja</span></label>
+              <label class="flex items-center"><input type="radio" name="energy-level" value="Media" class="mr-2"><span>Media</span></label>
+              <label class="flex items-center"><input type="radio" name="energy-level" value="Alta" class="mr-2"><span>Alta</span></label>
+            </div>
+          </div>
+
+          <div>
+            <label for="pain-discomfort" class="block text-sm font-medium text-gray-700 mb-2">Dolor o Molestias</label>
+            <textarea id="pain-discomfort" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe cualquier dolor o molestia..."></textarea>
+          </div>
+
+          <div>
+            <label class="flex items-center"><input type="checkbox" id="recordings-made" class="mr-2"><span class="text-sm font-medium text-gray-700">Se realizaron grabaciones</span></label>
+          </div>
+
+          <div>
+            <label for="technique-observations" class="block text-sm font-medium text-gray-700 mb-2">Técnica / Observaciones</label>
+            <textarea id="technique-observations" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ajustes técnicos generales, mejoras, fallos detectados..."></textarea>
+          </div>
+
+          <div>
+            <label for="extra-notes" class="block text-sm font-medium text-gray-700 mb-2">Notas Extra</label>
+            <textarea id="extra-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Factores externos: sueño, nutrición, estrés, etc."></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+            Guardar Resumen de Sesión
+          </button>
+        </form>
+      </div>
+
+      <!-- Training Log -->
+      <div class="bg-white rounded-lg card-shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">Registro de Entrenamientos</h2>
+          <div class="text-sm text-gray-600">Total de ejercicios: <span id="exercise-count">0</span></div>
+        </div>
+        <div id="training-log" class="space-y-4">
+          <div class="text-center text-gray-500 py-8">Selecciona un día y comienza a registrar tus ejercicios</div>
+        </div>
+      </div>
     </div>
-   </header><!-- Week Setup -->
-   <div class="max-w-6xl mx-auto p-4">
-    <div class="bg-white rounded-lg card-shadow p-6 mb-6">
-     <h2 class="text-xl font-semibold mb-4 text-gray-800">Configuración de la Semana</h2>
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div><label for="week-number" class="block text-sm font-medium text-gray-700 mb-2">Número de Semana</label> <input type="text" id="week-number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ej: Semana 12">
-      </div>
-      <div><label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Fecha de Inicio</label> <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500">
-      </div>
-     </div>
-    </div><!-- Day Selector -->
-    <div class="bg-white rounded-lg card-shadow p-6 mb-6">
-     <h2 class="text-xl font-semibold mb-4 text-gray-800">Seleccionar Día de Entrenamiento</h2>
-     <div class="grid grid-cols-2 md:grid-cols-4 gap-3"><button onclick="selectDay(1)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> 🦵 DÍA 1<br><span class="text-xs">Pierna + Conditioning</span> </button> <button onclick="selectDay(2)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> 💪 DÍA 2<br><span class="text-xs">Tren Superior + Conditioning</span> </button> <button onclick="selectDay(3)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> 🔥 DÍA 3<br><span class="text-xs">Espalda + Conditioning</span> </button> <button onclick="selectDay(4)" class="day-btn bg-pink-50 hover:bg-pink-100 text-pink-800 py-3 px-4 rounded-lg font-medium transition-colors border border-pink-200"> ⚡ DÍA 4<br><span class="text-xs">Accesorios + Conditioning</span> </button>
-     </div>
-    </div><!-- Exercise Entry Form -->
-    <div id="exercise-form" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
-     <h2 class="text-xl font-semibold mb-4 text-gray-800">Registrar Ejercicio</h2>
-     <div id="day-info" class="mb-4 p-4 bg-pink-50 rounded-lg border border-pink-200">
-      <h3 class="font-semibold text-pink-800" id="day-title"></h3>
-      <p class="text-sm text-pink-600" id="day-description"></p>
-     </div>
-     <form id="exercise-entry-form" class="space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-       <div><label for="exercise-name" class="block text-sm font-medium text-gray-700 mb-2">Ejercicio</label> <select id="exercise-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"> <option value="">Seleccionar ejercicio...</option> </select>
-       </div>
-       <div><label for="sets" class="block text-sm font-medium text-gray-700 mb-2">Series</label> <input type="number" id="sets" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" min="1" max="10">
-       </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-       <div><label for="reps" class="block text-sm font-medium text-gray-700 mb-2">Repeticiones</label> <input type="text" id="reps" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ej: 8, 6-10, AMRAP">
-       </div>
-       <div><label for="target-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Objetivo (kg)</label> <input type="number" id="target-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" step="0.5">
-       </div>
-       <div><label for="actual-weight" class="block text-sm font-medium text-gray-700 mb-2">Peso Real (kg)</label> <input type="number" id="actual-weight" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" step="0.5">
-       </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-       <div><label for="planned-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Planificado</label> <select id="planned-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
-       </div>
-       <div><label for="actual-rpe" class="block text-sm font-medium text-gray-700 mb-2">RPE Real</label> <select id="actual-rpe" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"> <option value="">Seleccionar...</option> <option value="6">6 - Fácil</option> <option value="7">7 - Moderado</option> <option value="7.5">7.5 - Moderado-Alto</option> <option value="8">8 - Difícil</option> <option value="8.5">8.5 - Muy Difícil</option> <option value="9">9 - Máximo</option> <option value="10">10 - Fallo</option> </select>
-       </div>
-       <div><label for="rest-time" class="block text-sm font-medium text-gray-700 mb-2">Descanso</label> <input type="text" id="rest-time" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ej: 2'30''">
-       </div>
-      </div>
-      <div><label for="technical-notes" class="block text-sm font-medium text-gray-700 mb-2">Observaciones Técnicas</label> <textarea id="technical-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ajustes técnicos, mejoras detectadas, fallos..."></textarea>
-      </div>
-      <div><label for="video-link" class="block text-sm font-medium text-gray-700 mb-2">Enlace al Vídeo (opcional)</label> <input type="url" id="video-link" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="https://...">
-      </div><button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> 💪 Registrar Ejercicio </button>
-     </form>
-    </div><!-- Session Summary Form -->
-    <div id="session-summary" class="bg-white rounded-lg card-shadow p-6 mb-6" style="display: none;">
-     <h2 class="text-xl font-semibold mb-4 text-gray-800">Resumen de la Sesión</h2>
-     <form id="summary-form" class="space-y-4">
-      <div><label class="block text-sm font-medium text-gray-700 mb-2">Energía General</label>
-       <div class="flex gap-4"><label class="flex items-center"> <input type="radio" name="energy-level" value="Baja" class="mr-2"> <span>Baja</span> </label> <label class="flex items-center"> <input type="radio" name="energy-level" value="Media" class="mr-2"> <span>Media</span> </label> <label class="flex items-center"> <input type="radio" name="energy-level" value="Alta" class="mr-2"> <span>Alta</span> </label>
-       </div>
-      </div>
-      <div><label for="pain-discomfort" class="block text-sm font-medium text-gray-700 mb-2">Dolor o Molestias</label> <textarea id="pain-discomfort" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Describe cualquier dolor o molestia..."></textarea>
-      </div>
-      <div><label class="flex items-center"> <input type="checkbox" id="recordings-made" class="mr-2"> <span class="text-sm font-medium text-gray-700">Se realizaron grabaciones</span> </label>
-      </div>
-      <div><label for="technique-observations" class="block text-sm font-medium text-gray-700 mb-2">Técnica / Observaciones</label> <textarea id="technique-observations" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Ajustes técnicos generales, mejoras, fallos detectados..."></textarea>
-      </div>
-      <div><label for="extra-notes" class="block text-sm font-medium text-gray-700 mb-2">Notas Extra</label> <textarea id="extra-notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Factores externos: sueño, nutrición, estrés, etc."></textarea>
-      </div><button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"> ✨ Guardar Resumen de Sesión </button>
-     </form>
-    </div><!-- Training Log -->
-    <div class="bg-white rounded-lg card-shadow p-6">
-     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-800">Registro de Entrenamientos</h2>
-      <div class="text-sm text-gray-600">
-       Total de ejercicios: <span id="exercise-count">0</span>
-      </div>
-     </div>
-     <div id="training-log" class="space-y-4">
-      <div class="text-center text-gray-500 py-8">
-       Selecciona un día y comienza a registrar tus ejercicios
-      </div>
-     </div>
-    </div>
-   </div>
   </div>
+
   <script>
-        let currentDay = null;
-        let exerciseData = [];
-        let currentRecordCount = 0;
+    let currentDay = null;
+    let exerciseData = [];
 
-        const defaultConfig = {
-            diary_title: "💪 Diario de Entrenamiento - Sandra Gutiérrez",
-            gym_name: "Mi Gimnasio",
-            trainer_name: "Entrenador Personal"
-        };
+    const defaultConfig = {
+      diary_title: "Diario de Entrenamiento Semanal",
+      gym_name: "Mi Gimnasio",
+      trainer_name: "Entrenador Personal"
+    };
 
-        const dayExercises = {
-            1: [
-                "Sentadilla trasera",
-                "Extensión de cuádriceps", 
-                "Peso muerto rumano (RDL)",
-                "Hip Thrust",
-                "Zancadas",
-                "Box Jump",
-                "Wall Sit",
-                "A Jump",
-                "Goblet Squat"
-            ],
-            2: [
-                "Press de banca con barra",
-                "Remo unilateral",
-                "Press con mancuernas",
-                "Curl de bíceps alterno",
-                "Elevaciones laterales",
-                "Frontal isométrico",
-                "Pullover con mancuerna",
-                "Burpees",
-                "Flexiones",
-                "Dumbbell Alternating Snatches"
-            ],
-            3: [
-                "Peso muerto RM",
-                "Deadlift 75% RM",
-                "Face Pulls",
-                "Pendlay Row",
-                "Remo 150m",
-                "Thrusters",
-                "Plancha izquierda",
-                "Plancha derecha",
-                "Plancha frontal"
-            ],
-            4: [
-                "Subidas al cajón con mancuerna",
-                "Bulgarian Split Squat",
-                "Anti-Rotación",
-                "Peso muerto unilateral",
-                "Sentadilla búlgara",
-                "Extensión de cadera unilateral"
-            ]
-        };
+    const dayExercises = {
+      1: [
+        "Sentadilla trasera","Extensión de cuádriceps","Peso muerto rumano (RDL)",
+        "Hip Thrust","Zancadas","Box Jump","Wall Sit","A Jump","Goblet Squat"
+      ],
+      2: [
+        "Press de banca con barra","Remo unilateral","Press con mancuernas",
+        "Curl de bíceps alterno","Elevaciones laterales","Frontal isométrico",
+        "Pullover con mancuerna","Burpees","Flexiones","Dumbbell Alternating Snatches"
+      ],
+      3: [
+        "Peso muerto RM","Deadlift 75% RM","Face Pulls","Pendlay Row",
+        "Remo 150m","Thrusters 20 kg","Plancha izquierda","Plancha derecha","Plancha frontal"
+      ],
+      4: [
+        "Subidas al cajón con mancuerna","Bulgarian Split Squat","Anti-Rotation Deadbug",
+        "Contralateral Kettlebell Front Rack","Box Jump","Wall Sit + disco 5 kg",
+        "Wall Ball 6 kg","Plate Sit Up","Flutter Kick"
+      ]
+    };
 
-        const dayInfo = {
-            1: {
-                title: "DÍA 1 – Pierna + Conditioning",
-                description: "Trabajo de pierna con énfasis en patrones de empuje y bisagra + trabajo metabólico EMOM"
-            },
-            2: {
-                title: "DÍA 2 – Tren Superior + Conditioning", 
-                description: "Entrenamiento de empujes y tirones del tren superior + condicionamiento de 15 minutos"
-            },
-            3: {
-                title: "DÍA 3 – Espalda + Conditioning",
-                description: "Sesión de fuerza máxima en peso muerto + trabajo complementario y resistencia estructural"
-            },
-            4: {
-                title: "DÍA 4 – Accesorios Tren Inferior + Conditioning",
-                description: "Trabajo unilateral, equilibrio y control motor + condicionamiento"
-            }
-        };
+    const dayInfo = {
+      1: { title: "DÍA 1 – Pierna + Conditioning", description: "Trabajo de pierna con énfasis en patrones de empuje y bisagra + trabajo metabólico EMOM" },
+      2: { title: "DÍA 2 – Tren Superior + Conditioning", description: "Entrenamiento de empujes y tirones del tren superior + condicionamiento de 15 minutos" },
+      3: { title: "DÍA 3 – Espalda + Conditioning", description: "Sesión de fuerza máxima en peso muerto + trabajo complementario y resistencia estructural" },
+      4: { title: "DÍA 4 – Accesorios Tren Inferior + Conditioning", description: "Trabajo unilateral, equilibrio y control motor + condicionamiento" }
+    };
 
-        const dataHandler = {
-            onDataChanged(data) {
-                exerciseData = data;
-                currentRecordCount = data.length;
-                updateTrainingLog();
-                updateExerciseCount();
-            }
-        };
+    const dataHandler = {
+      onDataChanged(data) {
+        exerciseData = Array.isArray(data) ? data : [];
+        updateTrainingLog();
+        updateExerciseCount();
+      }
+    };
 
-        async function initializeApp() {
-            const initResult = await window.dataSdk.init(dataHandler);
-            if (!initResult.isOk) {
-                console.error("Failed to initialize data SDK");
-                return;
-            }
+    async function initializeApp() {
+      const initResult = await window.dataSdk.init(dataHandler);
+      if (!initResult.isOk) {
+        console.error("Failed to initialize data SDK");
+        return;
+      }
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('diary-title').textContent = config.diary_title || defaultConfig.diary_title;
+            document.getElementById('gym-name').textContent = config.gym_name || defaultConfig.gym_name;
+            document.getElementById('trainer-name').textContent = config.trainer_name || defaultConfig.trainer_name;
+          },
+          mapToCapabilities: () => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["diary_title", config.diary_title || defaultConfig.diary_title],
+            ["gym_name", config.gym_name || defaultConfig.gym_name],
+            ["trainer_name", config.trainer_name || defaultConfig.trainer_name]
+          ])
+        });
+      }
+    }
 
-            if (window.elementSdk) {
-                await window.elementSdk.init({
-                    defaultConfig,
-                    onConfigChange: async (config) => {
-                        document.getElementById('diary-title').textContent = config.diary_title || defaultConfig.diary_title;
-                        document.getElementById('gym-name').textContent = config.gym_name || defaultConfig.gym_name;
-                        document.getElementById('trainer-name').textContent = config.trainer_name || defaultConfig.trainer_name;
-                    },
-                    mapToCapabilities: (config) => ({
-                        recolorables: [],
-                        borderables: [],
-                        fontEditable: undefined,
-                        fontSizeable: undefined
-                    }),
-                    mapToEditPanelValues: (config) => new Map([
-                        ["diary_title", config.diary_title || defaultConfig.diary_title],
-                        ["gym_name", config.gym_name || defaultConfig.gym_name],
-                        ["trainer_name", config.trainer_name || defaultConfig.trainer_name]
-                    ])
-                });
-            }
-        }
+    function selectDay(day, ev, btn) {
+      currentDay = day;
 
-        function selectDay(day) {
-            currentDay = day;
-            
-            // Update day buttons
-            document.querySelectorAll('.day-btn').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-pink-500');
-            });
-            event.target.classList.add('ring-2', 'ring-pink-500');
+      // Highlight & a11y
+      document.querySelectorAll('.day-btn').forEach(b => {
+        b.classList.remove('ring-2','ring-blue-500');
+        b.setAttribute('aria-pressed','false');
+      });
+      if (btn) {
+        btn.classList.add('ring-2','ring-blue-500');
+        btn.setAttribute('aria-pressed','true');
+      }
 
-            // Show exercise form
-            document.getElementById('exercise-form').style.display = 'block';
-            document.getElementById('session-summary').style.display = 'block';
+      // Show forms
+      document.getElementById('exercise-form').style.display = 'block';
+      document.getElementById('session-summary').style.display = 'block';
 
-            // Update day info
-            document.getElementById('day-title').textContent = dayInfo[day].title;
-            document.getElementById('day-description').textContent = dayInfo[day].description;
+      // Update day info
+      document.getElementById('day-title').textContent = dayInfo[day].title;
+      document.getElementById('day-description').textContent = dayInfo[day].description;
 
-            // Populate exercise dropdown
-            const exerciseSelect = document.getElementById('exercise-name');
-            exerciseSelect.innerHTML = '<option value="">Seleccionar ejercicio...</option>';
-            dayExercises[day].forEach(exercise => {
-                const option = document.createElement('option');
-                option.value = exercise;
-                option.textContent = exercise;
-                exerciseSelect.appendChild(option);
-            });
-        }
+      // Populate exercises
+      const exerciseSelect = document.getElementById('exercise-name');
+      exerciseSelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = ""; placeholder.textContent = "Seleccionar ejercicio...";
+      exerciseSelect.appendChild(placeholder);
+      dayExercises[day].forEach(ex => {
+        const opt = document.createElement('option');
+        opt.value = ex; opt.textContent = ex;
+        exerciseSelect.appendChild(opt);
+      });
 
-        document.getElementById('exercise-entry-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+      // Focus UX
+      exerciseSelect.focus();
+    }
 
-            if (currentRecordCount >= 999) {
-                showToast("Límite máximo de 999 ejercicios alcanzado. Por favor, elimina algunos registros primero.", "error");
-                return;
-            }
+    document.getElementById('exercise-entry-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-            const formData = new FormData(e.target);
-            const weekNumber = document.getElementById('week-number').value;
-            const startDate = document.getElementById('start-date').value;
+      if (!currentDay) return showToast("Selecciona un día.", "error");
 
-            if (!weekNumber || !startDate) {
-                showToast("Por favor, completa el número de semana y la fecha de inicio.", "error");
-                return;
-            }
+      const weekNumber = (document.getElementById('week-number').value || '').trim();
+      const startDate  = document.getElementById('start-date').value;
+      if (!weekNumber || !startDate) return showToast("Completa semana y fecha de inicio.", "error");
 
-            const exerciseRecord = {
-                id: Date.now().toString(),
-                week_number: weekNumber,
-                start_date: startDate,
-                day: currentDay,
-                exercise_name: document.getElementById('exercise-name').value,
-                sets: parseInt(document.getElementById('sets').value),
-                reps: document.getElementById('reps').value,
-                target_weight: parseFloat(document.getElementById('target-weight').value) || 0,
-                actual_weight: parseFloat(document.getElementById('actual-weight').value) || 0,
-                planned_rpe: parseFloat(document.getElementById('planned-rpe').value) || 0,
-                actual_rpe: parseFloat(document.getElementById('actual-rpe').value) || 0,
-                rest_time: document.getElementById('rest-time').value,
-                technical_notes: document.getElementById('technical-notes').value,
-                video_link: document.getElementById('video-link').value,
-                energy_level: "",
-                pain_discomfort: "",
-                recordings_made: false,
-                technique_observations: "",
-                extra_notes: "",
-                created_at: new Date().toISOString()
-            };
+      const name  = (document.getElementById('exercise-name').value || '').trim();
+      const sets  = parseInt(document.getElementById('sets').value, 10);
+      const reps  = (document.getElementById('reps').value || '').trim();
 
-            const button = e.target.querySelector('button[type="submit"]');
-            button.disabled = true;
-            button.textContent = 'Guardando...';
+      if (!name)  return showToast("Selecciona un ejercicio.", "error");
+      if (!Number.isInteger(sets) || sets < 1) return showToast("Series inválidas.", "error");
+      if (!reps)  return showToast("Indica repeticiones.", "error");
 
-            const result = await window.dataSdk.create(exerciseRecord);
+      // Soft URL validation
+      const videoRaw = (document.getElementById('video-link').value || '').trim();
+      const video_link = validateUrl(videoRaw);
 
-            if (result.isOk) {
-                showToast("Ejercicio registrado correctamente", "success");
-                e.target.reset();
-            } else {
-                showToast("Error al guardar el ejercicio. Inténtalo de nuevo.", "error");
-            }
+      if (exerciseData.length >= 999)
+        return showToast("Límite máximo de 999 ejercicios alcanzado.", "error");
 
-            button.disabled = false;
-            button.textContent = 'Registrar Ejercicio';
+      const record = {
+        id: (crypto?.randomUUID?.() || String(Date.now())),
+        week_number: weekNumber,
+        start_date: startDate,
+        day: currentDay,
+        exercise_name: name,
+        sets,
+        reps,
+        target_weight: Number(document.getElementById('target-weight').value) || 0,
+        actual_weight: Number(document.getElementById('actual-weight').value) || 0,
+        planned_rpe: Number(document.getElementById('planned-rpe').value) || 0,
+        actual_rpe: Number(document.getElementById('actual-rpe').value) || 0,
+        rest_time: (document.getElementById('rest-time').value || '').trim(),
+        technical_notes: (document.getElementById('technical-notes').value || '').trim(),
+        video_link,
+        // Session summary fields (may be filled later)
+        energy_level: "",
+        pain_discomfort: "",
+        recordings_made: false,
+        technique_observations: "",
+        extra_notes: "",
+        created_at: new Date().toISOString()
+      };
+
+      const button = e.target.querySelector('button[type="submit"]');
+      button.disabled = true; button.textContent = 'Guardando...';
+
+      const result = await window.dataSdk.create(record);
+
+      button.disabled = false; button.textContent = 'Registrar Ejercicio';
+
+      if (result.isOk) {
+        showToast("Ejercicio registrado correctamente", "success");
+        e.target.reset();
+        document.getElementById('exercise-name').focus();
+      } else {
+        showToast("Error al guardar el ejercicio. Inténtalo de nuevo.", "error");
+      }
+    });
+
+    document.getElementById('summary-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentDay) return showToast("Selecciona un día.", "error");
+
+      // Find last record of current day
+      const lastOfDay = [...exerciseData].reverse().find(x => x.day === currentDay);
+      if (!lastOfDay) return showToast("Registra al menos un ejercicio de este día.", "error");
+
+      const energyLevel = document.querySelector('input[name="energy-level"]:checked')?.value || "";
+      const updatedRecord = {
+        ...lastOfDay,
+        energy_level: energyLevel,
+        pain_discomfort: (document.getElementById('pain-discomfort').value || '').trim(),
+        recordings_made: document.getElementById('recordings-made').checked,
+        technique_observations: (document.getElementById('technique-observations').value || '').trim(),
+        extra_notes: (document.getElementById('extra-notes').value || '').trim()
+      };
+
+      const button = e.target.querySelector('button[type="submit"]');
+      button.disabled = true; button.textContent = 'Guardando...';
+
+      const result = await window.dataSdk.update(updatedRecord);
+
+      button.disabled = false; button.textContent = 'Guardar Resumen de Sesión';
+
+      if (result.isOk) {
+        showToast("Resumen de sesión guardado correctamente", "success");
+        e.target.reset();
+      } else {
+        showToast("Error al guardar el resumen. Inténtalo de nuevo.", "error");
+      }
+    });
+
+    function updateTrainingLog() {
+      const logContainer = document.getElementById('training-log');
+
+      if (!exerciseData.length) {
+        logContainer.innerHTML = '<div class="text-center text-gray-500 py-8">Selecciona un día y comienza a registrar tus ejercicios</div>';
+        updateExerciseCount();
+        return;
+      }
+
+      // Group by week_number + day
+      const grouped = exerciseData.reduce((acc, ex) => {
+        const key = `${ex.week_number}__${ex.day}`;
+        (acc[key] ||= []).push(ex);
+        return acc;
+      }, {});
+
+      // Sort groups by start_date desc then day desc
+      const keys = Object.keys(grouped).sort((a,b) => {
+        const A = grouped[a][0], B = grouped[b][0];
+        const byDate = new Date(B.start_date) - new Date(A.start_date);
+        if (byDate !== 0) return byDate;
+        return (B.day || 0) - (A.day || 0);
+      });
+
+      logContainer.innerHTML = '';
+      keys.forEach(key => {
+        const exs = grouped[key].slice().sort((a,b)=>a.created_at.localeCompare(b.created_at));
+        const first = exs[0];
+        const last  = exs[exs.length - 1];
+
+        const dayCard = document.createElement('div');
+        dayCard.className = 'exercise-card bg-gray-50 rounded-lg p-4 border border-gray-200';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'flex justify-between items-start mb-3';
+
+        const left = document.createElement('div');
+        const h3 = document.createElement('h3');
+        h3.className = 'font-semibold text-gray-800';
+        h3.textContent = dayInfo[first.day]?.title || `Día ${first.day}`;
+        const p = document.createElement('p');
+        p.className = 'text-sm text-gray-600';
+        p.textContent = `${first.week_number} - ${new Date(first.start_date).toLocaleDateString('es-ES')}`;
+        left.append(h3,p);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'text-red-500 hover:text-red-700 text-sm';
+        delBtn.textContent = 'Eliminar día';
+        delBtn.onclick = () => deleteDay(key);
+
+        header.append(left, delBtn);
+        dayCard.appendChild(header);
+
+        // List of exercises
+        const list = document.createElement('div');
+        list.className = 'space-y-2';
+
+        exs.forEach(ex => {
+          const item = document.createElement('div');
+          item.className = 'bg-white p-3 rounded border border-gray-100';
+
+          const row = document.createElement('div');
+          row.className = 'flex justify-between items-start';
+
+          const info = document.createElement('div');
+          info.className = 'flex-1';
+
+          const title = document.createElement('h4');
+          title.className = 'font-medium text-gray-800';
+          title.textContent = ex.exercise_name;
+
+          const meta = document.createElement('div');
+          meta.className = 'text-sm text-gray-600 mt-1';
+          const parts = [`${ex.sets} series × ${ex.reps}`];
+          if (Number(ex.actual_weight) > 0) parts.push(`${ex.actual_weight}kg`);
+          if (Number(ex.actual_rpe) > 0) parts.push(`RPE ${ex.actual_rpe}`);
+          meta.textContent = parts.join(' • ');
+
+          info.append(title, meta);
+
+          if (ex.technical_notes) {
+            const notes = document.createElement('p');
+            notes.className = 'text-xs text-gray-500 mt-1';
+            notes.textContent = ex.technical_notes;
+            info.appendChild(notes);
+          }
+
+          const del = document.createElement('button');
+          del.className = 'text-red-400 hover:text-red-600 text-xs ml-2';
+          del.textContent = '✕';
+          del.onclick = () => deleteExercise(ex.__backendId || ex.id);
+
+          row.append(info, del);
+          item.appendChild(row);
+          list.appendChild(item);
         });
 
-        document.getElementById('summary-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        dayCard.appendChild(list);
 
-            const energyLevel = document.querySelector('input[name="energy-level"]:checked')?.value || "";
-            const painDiscomfort = document.getElementById('pain-discomfort').value;
-            const recordingsMade = document.getElementById('recordings-made').checked;
-            const techniqueObservations = document.getElementById('technique-observations').value;
-            const extraNotes = document.getElementById('extra-notes').value;
-
-            // Update the last exercise record with session summary
-            if (exerciseData.length > 0) {
-                const lastExercise = exerciseData[exerciseData.length - 1];
-                const updatedRecord = {
-                    ...lastExercise,
-                    energy_level: energyLevel,
-                    pain_discomfort: painDiscomfort,
-                    recordings_made: recordingsMade,
-                    technique_observations: techniqueObservations,
-                    extra_notes: extraNotes
-                };
-
-                const button = e.target.querySelector('button[type="submit"]');
-                button.disabled = true;
-                button.textContent = 'Guardando...';
-
-                const result = await window.dataSdk.update(updatedRecord);
-
-                if (result.isOk) {
-                    showToast("Resumen de sesión guardado correctamente", "success");
-                    e.target.reset();
-                } else {
-                    showToast("Error al guardar el resumen. Inténtalo de nuevo.", "error");
-                }
-
-                button.disabled = false;
-                button.textContent = 'Guardar Resumen de Sesión';
-            }
-        });
-
-        function updateTrainingLog() {
-            const logContainer = document.getElementById('training-log');
-            
-            if (exerciseData.length === 0) {
-                logContainer.innerHTML = '<div class="text-center text-gray-500 py-8">Selecciona un día y comienza a registrar tus ejercicios</div>';
-                return;
-            }
-
-            // Group by week and day
-            const groupedData = exerciseData.reduce((acc, exercise) => {
-                const key = `${exercise.week_number}-${exercise.day}`;
-                if (!acc[key]) {
-                    acc[key] = [];
-                }
-                acc[key].push(exercise);
-                return acc;
-            }, {});
-
-            logContainer.innerHTML = '';
-
-            Object.keys(groupedData).sort().reverse().forEach(key => {
-                const exercises = groupedData[key];
-                const firstExercise = exercises[0];
-                
-                const dayCard = document.createElement('div');
-                dayCard.className = 'exercise-card bg-gray-50 rounded-lg p-4 border border-gray-200';
-                
-                dayCard.innerHTML = `
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h3 class="font-semibold text-gray-800">${dayInfo[firstExercise.day]?.title || `Día ${firstExercise.day}`}</h3>
-                            <p class="text-sm text-gray-600">${firstExercise.week_number} - ${new Date(firstExercise.start_date).toLocaleDateString('es-ES')}</p>
-                        </div>
-                        <button onclick="deleteDay('${key}')" class="text-red-500 hover:text-red-700 text-sm">
-                            Eliminar día
-                        </button>
-                    </div>
-                    <div class="space-y-2">
-                        ${exercises.map(exercise => `
-                            <div class="bg-white p-3 rounded border border-gray-100">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex-1">
-                                        <h4 class="font-medium text-gray-800">${exercise.exercise_name}</h4>
-                                        <div class="text-sm text-gray-600 mt-1">
-                                            <span>${exercise.sets} series × ${exercise.reps} reps</span>
-                                            ${exercise.actual_weight > 0 ? ` • ${exercise.actual_weight}kg` : ''}
-                                            ${exercise.actual_rpe > 0 ? ` • RPE ${exercise.actual_rpe}` : ''}
-                                        </div>
-                                        ${exercise.technical_notes ? `<p class="text-xs text-gray-500 mt-1">${exercise.technical_notes}</p>` : ''}
-                                    </div>
-                                    <button onclick="deleteExercise('${exercise.__backendId}')" class="text-red-400 hover:text-red-600 text-xs ml-2">
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    ${firstExercise.energy_level ? `
-                        <div class="mt-3 pt-3 border-t border-gray-200">
-                            <h4 class="text-sm font-medium text-gray-700 mb-2">Resumen de Sesión</h4>
-                            <div class="text-xs text-gray-600 space-y-1">
-                                <div>Energía: ${firstExercise.energy_level}</div>
-                                ${firstExercise.pain_discomfort ? `<div>Molestias: ${firstExercise.pain_discomfort}</div>` : ''}
-                                ${firstExercise.recordings_made ? '<div>✓ Grabaciones realizadas</div>' : ''}
-                                ${firstExercise.technique_observations ? `<div>Técnica: ${firstExercise.technique_observations}</div>` : ''}
-                                ${firstExercise.extra_notes ? `<div>Notas: ${firstExercise.extra_notes}</div>` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
-                `;
-                
-                logContainer.appendChild(dayCard);
-            });
+        // Session summary (from last record of the day)
+        if (last.energy_level || last.pain_discomfort || last.recordings_made || last.technique_observations || last.extra_notes) {
+          const wrap = document.createElement('div');
+          wrap.className = 'mt-3 pt-3 border-t border-gray-200';
+          const st = document.createElement('h4');
+          st.className = 'text-sm font-medium text-gray-700 mb-2';
+          st.textContent = 'Resumen de Sesión';
+          const box = document.createElement('div');
+          box.className = 'text-xs text-gray-600 space-y-1';
+          if (last.energy_level) box.append(textDiv(`Energía: ${last.energy_level}`));
+          if (last.pain_discomfort) box.append(textDiv(`Molestias: ${last.pain_discomfort}`));
+          if (last.recordings_made) box.append(textDiv('✓ Grabaciones realizadas'));
+          if (last.technique_observations) box.append(textDiv(`Técnica: ${last.technique_observations}`));
+          if (last.extra_notes) box.append(textDiv(`Notas: ${last.extra_notes}`));
+          wrap.append(st, box);
+          dayCard.appendChild(wrap);
         }
 
-        async function deleteExercise(backendId) {
-            const exercise = exerciseData.find(ex => ex.__backendId === backendId);
-            if (!exercise) return;
+        logContainer.appendChild(dayCard);
+      });
 
-            const result = await window.dataSdk.delete(exercise);
-            if (result.isOk) {
-                showToast("Ejercicio eliminado", "success");
-            } else {
-                showToast("Error al eliminar el ejercicio", "error");
-            }
-        }
+      function textDiv(txt){ const d=document.createElement('div'); d.textContent = txt; return d; }
+    }
 
-        async function deleteDay(dayKey) {
-            const [weekNumber, day] = dayKey.split('-');
-            const dayExercises = exerciseData.filter(ex => 
-                ex.week_number === weekNumber && ex.day === parseInt(day)
-            );
+    async function deleteExercise(idOrBackendId) {
+      const exercise = exerciseData.find(ex => (ex.__backendId || ex.id) === idOrBackendId);
+      if (!exercise) return;
 
-            for (const exercise of dayExercises) {
-                await window.dataSdk.delete(exercise);
-            }
-            
-            showToast("Día de entrenamiento eliminado", "success");
-        }
+      const result = await window.dataSdk.delete(exercise);
+      if (result.isOk) {
+        showToast("Ejercicio eliminado", "success");
+      } else {
+        showToast("Error al eliminar el ejercicio", "error");
+      }
+    }
 
-        function updateExerciseCount() {
-            document.getElementById('exercise-count').textContent = exerciseData.length;
-        }
+    async function deleteDay(dayKey) {
+      const [weekNumber, dayStr] = dayKey.split('__');
+      const dayNum = parseInt(dayStr, 10);
 
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
-                type === 'success' ? 'bg-green-500' : 
-                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-            }`;
-            toast.textContent = message;
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
+      const exercisesForDay = exerciseData.filter(ex => ex.week_number === weekNumber && ex.day === dayNum);
 
-        // Initialize the app
-        initializeApp();
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'994ca6fcb750cfa1',t:'MTc2MTUxMDAwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+      let allOk = true;
+      for (const exercise of exercisesForDay) {
+        const r = await window.dataSdk.delete(exercise);
+        allOk = allOk && r.isOk;
+      }
+
+      showToast(allOk ? "Día de entrenamiento eliminado" : "Algunos ejercicios no se pudieron borrar", allOk ? "success" : "error");
+    }
+
+    function updateExerciseCount() {
+      document.getElementById('exercise-count').textContent = exerciseData.length;
+    }
+
+    function validateUrl(u) {
+      if (!u) return "";
+      try {
+        const url = new URL(u, window.location.origin);
+        if (!/^https?:$/.test(url.protocol)) return "";
+        return url.href;
+      } catch { return ""; }
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+        type === 'success' ? 'bg-green-500' :
+        type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+      }`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 3000);
+    }
+
+    // Initialize the app
+    initializeApp();
+  </script>
+
+  <!-- (Cloudflare snippet original conservado tal cual) -->
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'994b88ec2157cbbc',t:'MTc2MTQ5ODI4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
 </html>
